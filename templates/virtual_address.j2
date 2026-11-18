@@ -1,0 +1,22 @@
+---
+apiVersion: infrahub.app/v1
+kind: Object
+spec:
+  kind: F5networksVirtualAddress
+  data:
+  {%- for _, vd in vs_addr.items() %}
+    {%- if vd.vip %}
+    - object_name: {{ vd.object_name }}
+      partition: {{ vd.partition }}
+      {%- if vd.address %}
+      address: {{ vd.address }}/32
+      {%- endif %}
+      {%- if vd.route_advertisement %}
+      route_advertisement: {{ vd.route_advertisement }}
+      {%- endif %}
+      {%- if vd.traffic_group %}
+      traffic_group: {{ vd.traffic_group }}
+      {%- endif %}
+      vip: {{ vd.vip }}
+    {%- endif %}
+  {% endfor %}

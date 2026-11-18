@@ -1,0 +1,26 @@
+---
+apiVersion: infrahub.app/v1
+kind: Object
+spec:
+  kind: F5networksPool
+  data:
+  {%- for _, pool in pools.items() %}
+    - object_name: {{ pool.object_name }}
+      partition: {{ pool.partition }}
+      {%- if pool.monitors %}
+      monitors:
+        {%- for _, md in pool.monitors.items() %}
+          {%- if md.monitor_type == "http" %}
+        - kind: F5networksHTTPMonitor
+          data:
+            object_name: {{ md.object_name }}
+            partition: {{ md.partition }}
+          {%- elif md.monitor_type == "https" %}
+        - kind: F5networksHTTPSMonitor
+          data:
+            object_name: {{ md.object_name }}
+            partition: {{ md.partition }}
+          {%- endif %}
+        {%- endfor %}
+      {%- endif %}
+  {% endfor %}

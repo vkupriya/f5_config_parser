@@ -1,0 +1,19 @@
+apiVersion: infrahub.app/v1
+kind: Object
+spec:
+  kind: F5networksRule
+  data:
+  {%- for rule, data in rules.items() %}
+    {%- if data.vips and data.pools%}
+    - object_name: "{{ rule.split('/')[2] }}"
+      partition: "{{ rule.split('/')[1] }}"
+      pool: 
+      {%- for pool in data.pools %}
+        - "/{{ pool.partition }}/{{ pool.object_name }}"
+      {%- endfor %}
+      vip:
+        {%- for vip in data.vips %}
+        - "/{{ vip.partition }}/{{ vip.object_name }}"
+        {%- endfor %}
+    {% endif %}
+  {%- endfor %}

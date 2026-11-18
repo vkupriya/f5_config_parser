@@ -1,0 +1,9 @@
+apiVersion: infrahub.app/v1
+kind: Object
+spec:
+  kind: F5networksSNATPool
+  data:
+  {%- for _, pd in snat_pools.items() %}
+    - object_name: {{ pd.object_name }}
+      partition: {{ pd.partition }}
+  {% endfor %}

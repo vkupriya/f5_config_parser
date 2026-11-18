@@ -1,0 +1,12 @@
+apiVersion: infrahub.app/v1
+kind: Object
+spec:
+  kind: F5networksPoolMember
+  data:
+  {%- for _, member in members.items() %}
+    {%- for pool in member.pools %}
+    - node: "{{ member.node }}"
+      service_port: {{ member.service_port }}
+      pool: "/{{ pool.partition }}/{{ pool.object_name }}"
+    {% endfor %}
+  {%- endfor %}

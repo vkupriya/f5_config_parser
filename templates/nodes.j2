@@ -1,0 +1,25 @@
+---
+apiVersion: infrahub.app/v1
+kind: Object
+spec:
+  kind: F5networksNode
+  data:
+  {%- for _, node in nodes.items() %}
+    - object_name: {{ node.object_name }}
+      partition: {{ node.partition }}
+    {%- if node.fqdn_name %}
+      fqdn_name: {{ node.fqdn_name }}
+    {%- endif %}
+    {%- if node.fqdn_autopopulate %}
+      fqdn_autopopulate: {{ node.fqdn_autopopulate }}
+    {%- endif %}
+    {%- if node.fqdn_address_family %}
+      fqdn_address_family: {{ node.fqdn_address_family }}
+    {%- endif %}
+    {%- if node.ip_address %}
+      ip_address: {{ node.ip_address }}/32
+    {%- endif %}
+    {%- if node.state %}
+      state: {{ node.state }}
+    {%- endif %}
+  {% endfor %}

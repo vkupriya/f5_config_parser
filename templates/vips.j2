@@ -1,0 +1,51 @@
+---
+apiVersion: infrahub.app/v1
+kind: Object
+spec:
+  kind: F5networksVIP
+  data:
+  {%- for _, vip in vips.items() %}
+    - object_name: {{ vip.object_name }}
+      partition: {{ vip.partition }}
+      destination_partition: {{ vip.destination_partition }}
+      destination_address: {{ vip.destination_address }}/32
+      source_address: {{ vip.source_address }}
+      {%- if vip.pool %}
+      pool: {{ vip.pool.dn }}
+      {%- endif %}
+#     ltm_ha_group: {{ ltm_ha_group }}
+      destination_service_port: {{ vip.destination_service_port }}
+      {%- if vip.snat %}
+      snat_pool: {{ vip.snat.dn }}
+      {%- endif %}
+      {%- if vip.profiles %}
+      traffic_profiles:
+        {%- for p, pd in vip.profiles.items() %}
+          {%- if pd.profile_type == "tcp" %}
+        - kind: F5networksTCPProfile
+          data:
+            object_name: {{ pd.object_name }}
+            partition: {{ pd.partition }}
+            {%- if pd.context %}
+            context: {{ pd.context }}
+            {%- endif %}
+          {%- elif pd.profile_type == "client-ssl" %}
+        - kind: F5networksClientSSLProfile
+          data:
+            object_name: {{ pd.object_name }}
+            partition: {{ pd.partition }}
+            {%- if pd.context %}
+            context: {{ pd.context }}
+            {%- endif %}
+          {%- elif pd.profile_type == "server-ssl" %}
+        - kind: F5networksServerSSLProfile
+          data:
+            object_name: {{ pd.object_name }}
+            partition: {{ pd.partition }}
+            {%- if pd.context %}
+            context: {{ pd.context }}
+            {%- endif %}
+          {%- endif %}
+        {%- endfor %}
+      {%- endif %}
+  {% endfor %}

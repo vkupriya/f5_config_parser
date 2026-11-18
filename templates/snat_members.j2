@@ -1,0 +1,18 @@
+apiVersion: infrahub.app/v1
+kind: Object
+spec:
+  kind: F5networksSNATTranslationAddress
+  data:
+  {%- for _, md in snat_members.items() %}
+    - object_name: {{ md.object_name }}
+      partition: {{ md.partition }}
+      {%- if md.address %}
+      address: {{ md.address }}
+      {%- endif %}
+      {%- if md.snat_pool %}
+      snat_pool: {{ md.snat_pool }}
+      {%- endif %}
+      {%- if md.traffic_group %}
+      traffic_group: {{ md.traffic_group }}
+      {%- endif %}
+  {% endfor %}

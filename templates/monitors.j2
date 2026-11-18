@@ -1,0 +1,76 @@
+{%- for _, md in monitors.items() %}
+  {%- if md.monitor_type == "https" %}
+---
+apiVersion: infrahub.app/v1
+kind: Object
+spec:
+  kind: F5networksHTTPSMonitor
+  data:
+    - object_name: {{ md.object_name }}
+      partition: {{ md.partition }}
+      {%- if md.defaults_from %}
+      defaults_from: {{ md.defaults_from }}
+      {%- endif %}
+      {%- if md.destination %}
+      destination: "{{ md.destination }}"
+      {%- endif %}
+      {%- if md.interval %}
+      interval: {{ md.interval }}
+      {%- endif %}
+      {%- if md.ip_dscp %}
+      ip_dscp: {{ md.ip_dscp }}
+      {%- endif %}
+      {%- if md.time_until_up %}
+      time_until_up: {{ md.time_until_up }}
+      {%- endif %}
+      {%- if md.timeout %}
+      timeout: {{ md.timeout }}
+      {%- endif %}
+      {%- if md.recv %}
+      recv: {{ md.recv }}
+      {%- endif %}
+      {%- if md.send %}
+      send: "{{ md.send }}"
+      {%- endif %}
+      {%- if md.ssl_profile %}
+      ssl_profile:
+        data:
+          object_name: {{ md.ssl_profile.split('/')[2] }}
+          partition: {{ md.ssl_profile.split('/')[1] }}
+      {%- endif %}
+  {% endif %}
+  {%- if md.monitor_type == "http" %}
+---
+apiVersion: infrahub.app/v1
+kind: Object
+spec:
+  kind: F5networksHTTPMonitor
+  data:
+    - object_name: {{ md.object_name }}
+      partition: {{ md.partition }}
+      {%- if md.defaults_from %}
+      defaults_from: {{ md.defaults_from }}
+      {%- endif %}
+      {%- if md.destination %}
+      destination: "{{ md.destination }}"
+      {%- endif %}
+      {%- if md.interval %}
+      interval: {{ md.interval }}
+      {%- endif %}
+      {%- if md.ip_dscp %}
+      ip_dscp: {{ md.ip_dscp }}
+      {%- endif %}
+      {%- if md.time_until_up %}
+      time_until_up: {{ md.time_until_up }}
+      {%- endif %}
+      {%- if md.timeout %}
+      timeout: {{ md.timeout }}
+      {%- endif %}
+      {%- if md.recv %}
+      recv: {{ md.recv }}
+      {%- endif %}
+      {%- if md.send %}
+      send: "{{ md.send }}"
+      {%- endif %}
+  {% endif %}
+ {% endfor %}

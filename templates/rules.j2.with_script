@@ -1,0 +1,32 @@
+apiVersion: infrahub.app/v1
+kind: Object
+spec:
+  kind: F5networksRule
+  data:
+  {%- for rule, data in rules.items() %}
+    - object_name: "{{ rule.split('/')[2] }}"
+      partition: "{{ rule.split('/')[1] }}"
+      script: |
+        '{{data.script|indent(8, True, True)-}}'
+    {%- if data.pools %}
+      pool: 
+        data:
+        {%- for pool in data.pools %}
+          - object_name: "{{ pool.object_name }}"
+            partition: "{{ pool.partition }}"
+        {% endfor %}
+    {%- endif %}
+    {%- if data.vips %}
+      vip:
+        data:
+         {%- for vip in data.vips %}
+          - object_name: "{{ vip.object_name }}"
+            partition: "{{ vip.partition }}"
+            destination_address: "{{ vip.destination_address }}"
+            destination_partition: "{{ vip.destination_partition }}"
+            destination_service_port: {{ vip.destination_service_port }}
+            source_address: "{{ vip.source_address }}"
+            ltm_ha_group: "ukdc1-n-slb0102"
+         {%- endfor %}
+    {%- endif %}
+  {%- endfor %}

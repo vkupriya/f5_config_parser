@@ -1,0 +1,118 @@
+{%- for _, pd in profiles.items() %}
+  {%- if pd.profile_type == "client-ssl" %}
+---
+apiVersion: infrahub.app/v1
+kind: Object
+spec:
+  kind: F5networksClientSSLProfile
+  data:
+    - object_name: {{ pd.object_name }}
+      partition: {{ pd.partition }}
+      {%- if pd.defaults_from %}
+      defaults_from: {{ pd.defaults_from }}
+      {%- endif %}
+      {%- if pd.server_name %}
+      server_name: {{ pd.server_name }}
+      {%- endif %}
+      {%- if pd.cert_key_chain %}
+      cert:
+        data:
+        {%- for cn, cd in pd.cert_key_chain.items() %}
+          - name: {{ cn }}
+            {%- if cd.cert %}
+            cert: 
+              data:
+                object_name: {{ cd.cert.split('/')[2] }}
+                partition: {{ cd.cert.split('/')[1] }}
+            {%- endif %}
+            {%- if cd.chain %}
+            chain: 
+              data:
+                object_name: {{ cd.chain.split('/')[2] }}
+                partition: {{ cd.chain.split('/')[1] }}
+            {%- endif %}
+            {%- if cd.key %}
+            key: 
+              data:
+                object_name: {{ cd.key.split('/')[2] }}
+                partition: {{ cd.key.split('/')[1] }}
+            {%- endif %}
+            {%- if cd.passphrase %}
+            passphrase: {{ cd.passphrase }}
+            {%- endif %}
+        {%- endfor %}
+      {%- endif %}
+  {% endif %}
+  {%- if pd.profile_type == "server-ssl" %}
+---
+apiVersion: infrahub.app/v1
+kind: Object
+spec:
+  kind: F5networksServerSSLProfile
+  data:
+    - object_name: {{ pd.object_name }}
+      partition: {{ pd.partition }}
+      {%- if pd.defaults_from %}
+      defaults_from: {{ pd.defaults_from }}
+      {%- endif %}
+      {%- if pd.passphrase %}
+      passphrase: {{ pd.passphrase }}
+      {%- endif %}
+      {%- if pd.server_name %}
+      server_name: {{ pd.server_name }}
+      {%- endif %}
+      {%- if pd.cert %}
+      cert: 
+        data:
+          object_name: {{ pd.cert.split('/')[2] }}
+          partition: {{ pd.cert.split('/')[1] }}
+      {%- endif %}
+      {%- if pd.chain %}
+      chain: 
+        data:
+          object_name: {{ pd.chain.split('/')[2] }}
+          partition: {{ pd.chain.split('/')[1] }}
+      {%- endif %}
+      {%- if pd.key %}
+      key: 
+        data:
+          object_name: {{ pd.key.split('/')[2] }}
+          partition: {{ pd.key.split('/')[1] }}
+      {%- endif %}
+  {% endif %}
+  {%- if pd.profile_type == "tcp" %}
+---
+apiVersion: infrahub.app/v1
+kind: Object
+spec:
+  kind: F5networksTCPProfile
+  data:
+    - object_name: {{ pd.object_name }}
+      partition: {{ pd.partition }}
+      {%- if pd.defaults_from %}
+      defaults_from: {{ pd.defaults_from }}
+      {%- endif %}
+      {%- if pd.idle_timeout%}
+      idle_timeout: {{ pd.idle_timeout }}
+      {%- endif %}
+  {% endif %}
+  {%- if pd.profile_type == "http" %}
+---
+apiVersion: infrahub.app/v1
+kind: Object
+spec:
+  kind: F5networksHTTPProfile
+  data:
+    - object_name: {{ pd.object_name }}
+      partition: {{ pd.partition }}
+      {%- if pd.defaults_from %}
+      defaults_from: {{ pd.defaults_from }}
+      {%- endif %}
+      {%- if pd.proxy_type%}
+      proxy_type: {{ pd.proxy_type }}
+      {%- endif %}
+      {%- if pd.insert_xforwarded_for%}
+      insert_xforwarded_for: {{ pd.insert_xforwarded_for }}
+      {%- endif %}
+  {% endif %}
+{%- endfor %}
